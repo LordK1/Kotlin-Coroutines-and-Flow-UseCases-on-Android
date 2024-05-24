@@ -40,7 +40,6 @@ class PerformNetworkRequestsConcurrentlyViewModel(
         }
 
         viewModelScope.launch {
-
             try {
                 val versions = awaitAll(oreoFeaturesDeferred, pieFeaturesDeferred, android10FeaturesDeferred)
                 uiState.value = UiState.Success(versions)

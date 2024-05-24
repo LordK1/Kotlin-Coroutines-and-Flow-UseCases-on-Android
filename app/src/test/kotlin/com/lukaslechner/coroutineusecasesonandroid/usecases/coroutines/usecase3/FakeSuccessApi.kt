@@ -1,4 +1,4 @@
-package com.lukaslechner.coroutineusecasesonandroid.usecases.coroutines.usecase2
+package com.lukaslechner.coroutineusecasesonandroid.usecases.coroutines.usecase3
 
 import com.lukaslechner.coroutineusecasesonandroid.mock.AndroidVersion
 import com.lukaslechner.coroutineusecasesonandroid.mock.MockApi
@@ -7,29 +7,22 @@ import com.lukaslechner.coroutineusecasesonandroid.mock.mockAndroidVersions
 import com.lukaslechner.coroutineusecasesonandroid.mock.mockVersionFeaturesAndroid10
 import com.lukaslechner.coroutineusecasesonandroid.mock.mockVersionFeaturesOreo
 import com.lukaslechner.coroutineusecasesonandroid.mock.mockVersionFeaturesPie
-import okhttp3.MediaType
-import okhttp3.ResponseBody
-import retrofit2.HttpException
-import retrofit2.Response
+import kotlinx.coroutines.delay
 
-class FakeFeaturesErrorApi : MockApi {
+class FakeSuccessApi(val delayMillis: Long = 0) : MockApi {
     override suspend fun getRecentAndroidVersions(): List<AndroidVersion> {
         return mockAndroidVersions
     }
 
-    override suspend fun getAndroidVersionFeatures(apiLevel: Int): VersionFeatures =
-        when (apiLevel) {
+    override suspend fun getAndroidVersionFeatures(apiLevel: Int): VersionFeatures {
+        delay(delayMillis)
+        return when (apiLevel) {
             27 -> mockVersionFeaturesOreo
             28 -> mockVersionFeaturesPie
-            29 -> throw HttpException(
-                Response.error<List<AndroidVersion>>(
-                    404,
-                    ResponseBody.create(MediaType.parse("application/json"), "")
-                )
-            )
+            29 -> mockVersionFeaturesAndroid10
             else -> {
                 throw IllegalArgumentException()
             }
         }
-
+    }
 }

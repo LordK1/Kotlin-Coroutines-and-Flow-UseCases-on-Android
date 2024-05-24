@@ -2,6 +2,8 @@ package com.lukaslechner.coroutineusecasesonandroid.usecases.coroutines.usecase2
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.lukaslechner.coroutineusecasesonandroid.mock.mockVersionFeaturesAndroid10
+import com.lukaslechner.coroutineusecasesonandroid.usecases.coroutines.usecase3.FakeFeaturesErrorApi
+import com.lukaslechner.coroutineusecasesonandroid.usecases.coroutines.usecase3.FakeSuccessApi
 import com.lukaslechner.coroutineusecasesonandroid.utils.ReplaceMainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert
