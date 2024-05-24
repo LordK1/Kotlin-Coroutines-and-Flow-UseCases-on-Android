@@ -39,6 +39,7 @@ class CalculationInBackgroundViewModel : BaseViewModel<UiState>() {
             for (i in 1..factorialOf) {
                 result = result.multiply(i.toBigInteger())
             }
+            Timber.d("Calculation factorial completed!")
             result
         }
 }
