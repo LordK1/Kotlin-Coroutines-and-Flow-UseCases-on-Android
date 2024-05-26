@@ -1,8 +1,17 @@
 package com.lukaslechner.coroutineusecasesonandroid.usecases.flow.usecase2
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.lukaslechner.coroutineusecasesonandroid.base.BaseViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.withIndex
+import timber.log.Timber
 
 class FlowUseCase2ViewModel(
     stockPriceDataSource: StockPriceDataSource,
@@ -23,5 +32,20 @@ class FlowUseCase2ViewModel(
 
      */
 
-    val currentStockPriceAsLiveData: LiveData<UiState> = TODO()
+    val currentStockPriceAsLiveData: LiveData<UiState> = stockPriceDataSource.latestStockList
+        .filter { stockList -> stockList.any { it.name == "Alphabet (Google)" && it.currentPrice > 2300 } }
+        .map { stockList -> stockList.filter { it.country == "United States" } }
+        .map { stockList -> stockList.filter { it.name != "Apple" && it.name != "Microsoft" } }
+        .map { stockList -> stockList.mapIndexed { index, stock -> stock.copy(rank = index + 1) } }
+        .map { stockList -> stockList.sortedBy { it.rank } }
+        .map { stockList -> stockList.filter { it.rank <= 10 } }
+        .take(10)
+        .map { stockList -> UiState.Success(stockList) }
+        .withIndex()
+        .onEach { Timber.d("index : ${it.index + 1}") }
+        .map { it.value }
+        .onStart { UiState.Loading }
+        .asLiveData(Dispatchers.Default)
+
+
 }

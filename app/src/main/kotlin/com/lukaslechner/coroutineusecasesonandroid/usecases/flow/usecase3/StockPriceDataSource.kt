@@ -5,6 +5,7 @@ import com.lukaslechner.coroutineusecasesonandroid.usecases.flow.mock.Stock
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import timber.log.Timber
 
 interface StockPriceDataSource {
@@ -20,5 +21,12 @@ class NetworkStockPriceDataSource(mockApi: FlowMockApi) : StockPriceDataSource {
             emit(currentStockList)
             delay(5_000)
         }
+    }.retry { cause ->
+        Timber.tag("Flow").d("Enter retry block $cause")
+        val shouldRetry = cause is Exception
+        if (shouldRetry) {
+            delay(5000)
+        }
+        shouldRetry
     }
 }
